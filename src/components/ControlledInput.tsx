@@ -14,7 +14,7 @@ export default function ControlledInput({ control, name, ...textInputProps }: Co
             control={control}
             name={name}
             render={({ field: { value, onChange, onBlur }, fieldState: { error, invalid } }) => (
-                <View>
+                <View style={{flex:1}}>
                     <TextInput
                         {...textInputProps}
                         style={{ backgroundColor: theme.colors.background }}

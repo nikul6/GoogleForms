@@ -2,8 +2,16 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Button, Card, useTheme, TextInput, Checkbox } from 'react-native-paper'
 import { useRouter } from 'expo-router'
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { PaymentInfo, PaymentInfoSchema } from '../../src/schema/checkout.schema';
+import ControlledInput from '../../src/components/ControlledInput';
 
 export default function PaymentDetails() {
+  const { control, handleSubmit } = useForm<PaymentInfo>({
+    resolver: zodResolver(PaymentInfoSchema),
+  });
+
   const router = useRouter();
   const theme = useTheme();
 
@@ -16,26 +24,39 @@ export default function PaymentDetails() {
       <Card style={{ backgroundColor: theme.colors.background }}>
         <Card.Content style={{ gap: 10 }}>
           <Card.Title title={'Payment details'} titleVariant='titleLarge' />
-          <TextInput
+          <ControlledInput
+            control={control}
+            name='number'
             label={'Card number'}
             placeholder='4242 4242 4242 4242'
-            style={{ backgroundColor: theme.colors.background }}
           />
           <View style={styles.dateCvv}>
-            <TextInput
+            <ControlledInput
+              control={control}
+              name='expirationDate'
               label={'Expiration date'}
               placeholder="mm/yyyy"
-              style={{ backgroundColor: theme.colors.background, flex: 3 }}
             />
-            <TextInput
+            <ControlledInput
+              control={control}
+              name='securityCode'
               label={'Security code'}
-              style={{ backgroundColor: theme.colors.background, flex: 2 }}
             />
           </View>
-          <Checkbox.Item label='Save payment information' status='checked' />
+          <Controller
+            control={control}
+            name='saveInfo'
+            render={({ field: { value, onChange } }) => (
+              <Checkbox.Item
+                label='Save payment information'
+                onPress={() => onChange(!value)}
+                status={value ? 'checked' : 'unchecked'}
+              />
+            )}
+          />
         </Card.Content>
       </Card>
-      <Button mode='contained' onPress={nextPage}>Next</Button>
+      <Button mode='contained' onPress={handleSubmit(nextPage)}>Next</Button>
     </ScrollView>
   )
 }
