@@ -6,17 +6,26 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PaymentInfo, PaymentInfoSchema } from '../../src/schema/checkout.schema';
 import ControlledInput from '../../src/components/ControlledInput';
+import { useCheckoutContext } from '../../src/contexts/CheckoutContext';
 
 export default function PaymentDetails() {
   const { control, handleSubmit } = useForm<PaymentInfo>({
     resolver: zodResolver(PaymentInfoSchema),
   });
 
+  const { setPayment, onSubmitAll } = useCheckoutContext();
   const router = useRouter();
   const theme = useTheme();
 
-  const nextPage = () => {
-    router.push('/')
+  const nextPage = async (data: PaymentInfo) => {
+    // setPayment(data);
+    const success = await onSubmitAll(data);
+    
+    if (success) {
+      router.push('/')
+    } else {
+      console.log("error")
+    }
   }
 
   return (
