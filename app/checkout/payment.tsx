@@ -13,14 +13,13 @@ export default function PaymentDetails() {
     resolver: zodResolver(PaymentInfoSchema),
   });
 
-  const { setPayment, onSubmitAll } = useCheckoutContext();
+  const { onSubmitAll } = useCheckoutContext();
   const router = useRouter();
   const theme = useTheme();
 
   const nextPage = async (data: PaymentInfo) => {
-    // setPayment(data);
     const success = await onSubmitAll(data);
-    
+
     if (success) {
       router.push('/')
     } else {
